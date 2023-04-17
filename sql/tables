@@ -1,0 +1,57 @@
+CREATE TABLE especes (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  race VARCHAR(50) NOT NULL,
+  nourriture ENUM('Carnivore','Herbivore','Omnivore') NOT NULL,
+  duree_vie INT NOT NULL,
+  aquatique BOOLEAN NOT NULL
+);
+
+CREATE TABLE animaux (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  race_id INT NOT NULL,
+  date_naissance DATE,
+  sexe ENUM('M','F'),
+  pseudo VARCHAR(50) NOT NULL,
+  commentaire VARCHAR(255),
+  FOREIGN KEY (race_id) REFERENCES especes(id)
+);
+
+CREATE TABLE personnels (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  nom VARCHAR(50) NOT NULL,
+  prenom VARCHAR(50) NOT NULL,
+  date_naissance DATE NOT NULL,
+  sexe ENUM('H','F') NOT NULL,
+  login VARCHAR(50) NOT NULL,
+  mdp VARCHAR(50) NOT NULL,
+  fonction ENUM('DIRECTEUR','EMPLOYE') NOT NULL,
+  salaire DECIMAL(7,2) NOT NULL
+);
+
+CREATE TABLE loc_animaux (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  animal_id INT NOT NULL UNIQUE,
+  date_arrivee DATE,
+  date_sortie DATE,
+  FOREIGN KEY (animal_id) REFERENCES animaux(id)
+);
+
+
+-- create user db_manager_employe with access to Especes, Animaux, and Loc_animaux tables
+CREATE USER 'db_manager_employe'@'%' IDENTIFIED BY 'test123';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `especes` TO 'db_manager_employe'@'%';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `animaux` TO 'db_manager_employe'@'%';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `loc_animaux` TO 'db_manager_employe'@'%';
+
+-- create user db_manager_directeur with access to all tables
+CREATE USER 'db_manager_directeur'@'%' IDENTIFIED BY 'testsuper123';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `especes` TO 'db_manager_directeur'@'%';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `animaux` TO 'db_manager_directeur'@'%';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `loc_animaux` TO 'db_manager_directeur'@'%';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `personnels` TO 'db_manager_directeur'@'%';
+
+
+INSERT INTO personnels VALUES (1,'bat','bat','1999-08-31','H','bat','test123','EMPLOYE',2000);
+
+INSERT INTO personnels VALUES (2,'bat','bat','1999-08-31','H','batz','test123','DIRECTEUR',2000);
+
